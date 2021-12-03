@@ -10,8 +10,6 @@ import java.nio.file.Path;
 public class DeleteBefore {
 
     public void anySymbols(Path path, String count) {
-        File oldName;
-        File newName;
         int endOfDeleting = Integer.parseInt(count);
         int lastDirectory = 0;
         boolean countOfDeletingIsLong = true;
@@ -19,17 +17,14 @@ public class DeleteBefore {
         try (DirectoryStream<Path> files = Files.newDirectoryStream(path)) {
             for (Path abc : files) {
                 StringBuilder stringBuilder = new StringBuilder();
-                String tmp = abc.toString();
-                String[] splittedPathToPicture = tmp.split("\\\\");
+                String filePath = abc.toString();
+                String[] splittedPathToPicture = filePath.split("\\\\");
                 lastDirectory = splittedPathToPicture.length - 1;
-                countOfDeletingIsLong = splittedPathToPicture[splittedPathToPicture.length - 1].length() <= Integer.parseInt(count) + 4;
+                countOfDeletingIsLong = splittedPathToPicture[lastDirectory].length() <= Integer.parseInt(count) + 4;
                 if (countOfDeletingIsLong) {
                     continue;
                 } else {
-                    if (splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".jpg")
-                            || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".png")
-                            || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".JPG")
-                            || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".PNG")) {
+                    if (isItPicture(splittedPathToPicture[splittedPathToPicture.length - 1])) {
                         StringBuilder resultPathString = new StringBuilder();
                         for (int i = 0; i < splittedPathToPicture.length; i++) {
                             if (i == lastDirectory) {
@@ -43,14 +38,22 @@ public class DeleteBefore {
                             stringBuilder.append(splittedPathToPicture[i]);
 
                         }
-                        oldName = new File(stringBuilder.toString());
-                        newName = new File(resultPathString.toString());
-                        oldName.renameTo(newName);
+                        renameIt(stringBuilder, resultPathString);
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isItPicture(String str) {
+        return str.endsWith(".jpg") || str.endsWith(".png") || str.endsWith(".JPG") || str.endsWith(".PNG");
+    }
+
+    private void renameIt(StringBuilder oldPath, StringBuilder newPath) {
+        File oldName = new File(oldPath.toString());
+        File newName = new File(newPath.toString());
+        oldName.renameTo(newName);
     }
 }
