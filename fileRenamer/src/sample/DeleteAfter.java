@@ -14,7 +14,7 @@ public class DeleteAfter {
     public void anySymbols(Path path, String count) {
         File oldName;
         File newName;
-        int formatOfFileSymbols = 4 + Integer.parseInt(count);
+        int formatSymbolsLength = 4 + Integer.parseInt(count);
         int lastDirectory = 0;
         boolean countOfDeletingIsLong = true;
 
@@ -31,10 +31,7 @@ public class DeleteAfter {
                     continue;
                     }
                 else {
-                    if (splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".jpg")
-                            || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".png")
-                                || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".JPG")
-                                    || splittedPathToPicture[splittedPathToPicture.length - 1].endsWith(".PNG")) {
+                    if (isItPicture(splittedPathToPicture[splittedPathToPicture.length - 1])) {
                         for (int i = 0; i < splittedPathToPicture.length; i++) {
                             if (i == lastDirectory) {
                                 splittedPathToPicture[i] = splittedPathToPicture[i];
@@ -43,10 +40,7 @@ public class DeleteAfter {
                             }
                             stringBuilder.append(splittedPathToPicture[i]);
                         }
-                        oldName = new File(stringBuilder.toString());
-                        stringBuilder.delete(stringBuilder.length() - formatOfFileSymbols, stringBuilder.length() - 4);
-                        newName = new File(stringBuilder.toString());
-                        oldName.renameTo(newName);
+                        renameIt(stringBuilder, formatSymbolsLength);
                     }
                 }
             }
@@ -54,4 +48,18 @@ public class DeleteAfter {
             e.printStackTrace();
         }
     }
+
+    private boolean isItPicture(String str){
+        return str.endsWith(".jpg") || str.endsWith(".png") || str.endsWith(".JPG") || str.endsWith(".PNG");
+    }
+
+    private void renameIt(StringBuilder str, int formatSymbolsLength){
+        StringBuilder tmp = new StringBuilder(str);
+
+        File oldName = new File(tmp.toString());
+        tmp.delete(tmp.length() - formatSymbolsLength, tmp.length() - 4);
+        File newName = new File(tmp.toString());
+        oldName.renameTo(newName);
+    }
+
 }
